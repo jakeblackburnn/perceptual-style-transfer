@@ -1,18 +1,24 @@
 import torch
+from pathlib import Path
 
 from style_transfer.img_transformer import Transformer
 from style_transfer.train           import train_curriculum
 
 if __name__ == '__main__':
 
-    content_dir = 'images/VOC2012/JPEGImages'
-    style_dir = 'images/Ukiyo_e'
+    content_dir = 'images/VOC2012'
+    style_dir = 'images/Impressionism'
 
-    content_frac = 0.02 # use random sample of 2% of total images
-    style_frac = 0.2    # use random sample of 20% of style images
+    content_frac = 0.05 # use random sample of 20% of total images
+    style_frac = 1.0    # use all style images
 
-    curriculum = 'basic_small_batch'
-    out_dir = f'models/{curriculum}'
+    curriculum = 'dry_run'
+    
+    # Extract style name from directory path
+    style_name = Path(style_dir).name
+    
+    # Create hierarchical output directory: curriculum/style
+    out_dir = f'models/{curriculum}/{style_name}'
 
     # Device setup
     print("PyTorch version:", torch.__version__)
