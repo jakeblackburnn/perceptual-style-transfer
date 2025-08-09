@@ -32,7 +32,8 @@ Curricula = {
         # dry run for testing basic functionality
     "dry_run": {
         "stages": [
-            {"resolution": 64, "batch_size": 4, "epochs": 1, "lr": med_rate}
+            {"resolution": 64, "batch_size": 4, "epochs": 1, "lr": med_rate},
+            {"resolution": 64, "batch_size": 4, "epochs": 1, "lr": high_rate}
         ]
     },
 
