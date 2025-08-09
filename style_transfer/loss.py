@@ -49,7 +49,7 @@ def gram_matrix(feature_map):
     return torch.bmm(features, features.transpose(1, 2)) / (c * h * w)
 
 # perceptual loss defined by vgg model features
-def perceptual_loss(model, batch,
+def vgg_perceptual_loss(model, batch,
                         content_layer='21',                       
                         style_layers=['0', '5', '10', '19', '28'],
                         content_weight=1.0,
