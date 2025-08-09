@@ -8,7 +8,7 @@ from PIL import Image
 
 class StyleTransferDataset(Dataset):
 
-    def __init__(self, content_dir, content_frac, style_dir, style_frac, image_size, device):
+    def __init__(self, content_dir, content_frac, style_dir, style_frac, image_size, device, quiet=False):
 
         valid_exts = {".jpg", ".jpeg", ".png"}
 
@@ -22,7 +22,11 @@ class StyleTransferDataset(Dataset):
             if p.suffix.lower() in valid_exts
         ]
 
-        # sanity checks
+        # store original counts for reporting
+        total_content = len(self.content_paths)
+        total_style = len(self.style_paths)
+
+            # ----- sanity checks -----
 
         # check images exist
         if not self.content_paths:
@@ -38,11 +42,43 @@ class StyleTransferDataset(Dataset):
             print("Dataset init: content fraction is nonsensical")
 
         # check fraction of style images makes sense
-        if (0 < style_frac) or (style_frac <= 1.0):
+        if (0 < style_frac) and (style_frac <= 1.0):
             k = int(len(self.style_paths) * style_frac)
             self.style_paths = random.sample(self.style_paths, k)
         else:
-            print("Dataset init: content fraction is nonsensical")
+            print("Dataset init: style fraction is nonsensical")
+
+        # store final counts
+        used_content = len(self.content_paths)
+        used_style = len(self.style_paths)
+
+        # display dataset information
+        style_name = Path(style_dir).name
+        content_name = Path(content_dir).name
+        
+        if not quiet:
+            print(f"\n=== Dataset Information ===")
+            print(f"Content dataset: {content_name}")
+            print(f"  Total images found: {total_content}")
+            print(f"  Fraction used: {content_frac}")
+            print(f"  Images used: {used_content}")
+            print(f"Style dataset: {style_name}")
+            print(f"  Total images found: {total_style}")
+            print(f"  Fraction used: {style_frac}")
+            print(f"  Images used: {used_style}")
+            print(f"============================\n")
+
+        # store dataset info for access by training pipeline
+        self.dataset_info = {
+            'content_name': content_name,
+            'style_name': style_name,
+            'total_content': total_content,
+            'total_style': total_style,
+            'content_frac': content_frac,
+            'style_frac': style_frac,
+            'used_content': used_content,
+            'used_style': used_style
+        }
 
         # flags
         self.image_size = image_size
