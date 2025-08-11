@@ -49,29 +49,52 @@ def gram_matrix(feature_map):
     return torch.bmm(features, features.transpose(1, 2)) / (c * h * w)
 
 # perceptual loss defined by vgg model features
-def vgg_perceptual_loss(model, batch,
+def vgg_perceptual_loss(model, content_images, style_images,
                         content_layer='21',                       
                         style_layers=['0', '5', '10', '19', '28'],
                         content_weight=1.0,
                         style_weight=1e5):
+    """
+    VGG perceptual loss with explicit all-pairs style comparison.
+    
+    For B_content content images and B_style style images:
+    - Generates B_content stylized images (one per content image)
+    - Content loss: each generated vs its corresponding original content
+    - Style loss: each generated vs EVERY style image individually
+    - Total style comparisons: B_content × B_style pairings
+    
+    Example: 2 content + 3 style images = 2 content comparisons + 6 style comparisons
+    """
+    # content_images: [B_content, 3, H, W] - flexible number of content images
+    # style_images: [B_style, 3, H, W] - flexible number of style images
+    
+    B_content = content_images.size(0)
+    B_style = style_images.size(0)
+    
+    # Generate stylized images
+    generated_images = model(content_images)  # [B_content, 3, H, W]
 
-    content_images, style_images = batch
-    generated_images = model(content_images)
+    # Extract VGG features for generated and content images
+    gen_feats = vgg(generated_images)        # Dict: layer_name -> [B_content, C, H, W]
+    content_feats = vgg(content_images)      # Dict: layer_name -> [B_content, C, H, W]
+    
+    # Extract VGG features for style images
+    style_feats = vgg(style_images)  # Dict: layer_name -> [B_style, C, H, W]
 
-    # Extract features from VGG
-    gen_feats     = vgg(generated_images)
-    content_feats = vgg(content_images)
-    style_feats   = vgg(style_images)
-
-    # Content loss = mse( generated content feats - original content feats )
+    # Content loss: each generated image vs its corresponding original content image
     content_loss = nn.MSELoss()(gen_feats[content_layer], content_feats[content_layer])
 
-    # Style loss = sum( mse( generated gram matrix - original gram matrix ) )
+    # Style loss: explicit all-pairs comparison
+    # Each generated image compared against every style image individually
     style_loss = 0.0
     for layer in style_layers:
-        target_gram = gram_matrix(style_feats[layer])
-        gen_gram    = gram_matrix(gen_feats[layer])
-
-        style_loss += nn.MSELoss()(gen_gram, target_gram)
+        # Compute gram matrices for this layer
+        gen_grams = gram_matrix(gen_feats[layer])    # [B_content, feat_size, feat_size]
+        style_grams = gram_matrix(style_feats[layer]) # [B_style, feat_size, feat_size]
+        
+        # Explicit double loop: all content-style pairings
+        for content_idx in range(B_content):
+            for style_idx in range(B_style):
+                style_loss += nn.MSELoss()(gen_grams[content_idx], style_grams[style_idx])
 
     return content_weight * content_loss + style_weight * style_loss
