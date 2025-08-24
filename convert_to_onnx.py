@@ -1,19 +1,16 @@
-#!/usr/bin/env python3
-
 import torch
 import torch.onnx
 import os
-from style_transfer.img_transformer import Transformer
+from style_transfer.image_transformers.small_guy import SmallGuy
+from style_transfer.image_transformers.medium_guy import MediumGuy
+from style_transfer.image_transformers.big_guy import BigGuy
+from style_transfer.config import Models
 
-def convert_to_onnx(pth_path, onnx_path):
-    """
-    Convert a PyTorch model (.pth file) to ONNX format.
+def convert_to_onnx(model_name):
     
-    Args:
-        pth_path (str): Path to the .pth file
-        onnx_path (str): Path where the .onnx file will be saved
-    """
-    
+    pth_path = f"models/{model_name}/{model_name}.pth"
+    onnx_path = f"models/{model_name}/{model_name}.onnx"
+
     # Check if input file exists
     if not os.path.exists(pth_path):
         raise FileNotFoundError(f"Model file not found: {pth_path}")
@@ -21,8 +18,18 @@ def convert_to_onnx(pth_path, onnx_path):
     # Load the model
     print(f"Loading model from {pth_path}...")
     
-    # Initialize the model architecture
-    model = Transformer()
+    model_size = Models.get(model_name).get('model_size')
+    if model_size == "small":
+        model = SmallGuy();
+    elif model_size == "medium":
+        model = MediumGuy();
+    elif model_size == "big":
+        model = BigGuy();
+    else: 
+        print("""
+              something is horribly wrong this is a nightmare 
+              please help I couldnt figure out what sized model to use
+              """)
     
     # Load the state dict
     checkpoint = torch.load(pth_path, map_location='cpu')
@@ -77,12 +84,11 @@ def convert_to_onnx(pth_path, onnx_path):
 
 
 if __name__ == "__main__":
-    # Hardcoded paths - modify these as needed
-    PTH_PATH = "/Users/jackblackburn/code/main/style-transfer/py/models/basic/Ukiyo_e/checkpoints/ckpt_stage1_epoch4.pth"
-    ONNX_PATH = "/Users/jackblackburn/code/main/style-transfer/py/models/onnx/ukiyo_basic.onnx"
     
+    model_name = "dry_run"
+
     try:
-        convert_to_onnx(PTH_PATH, ONNX_PATH)
+        convert_to_onnx(model_name)
     except Exception as e:
         print(f"Error: {e}")
         exit(1)
