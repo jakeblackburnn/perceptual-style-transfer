@@ -1,15 +1,4 @@
 # STYLE TRANSFER TRAINING CONFIGURATION
-#
-# defines optimizer and training curriculum hyperparams
-
-
-
-    # OPTIMIZER
-
-import torch
-optimizer = torch.optim.Adam
-
-
 
     # HYPERPARAMS
 
@@ -19,164 +8,134 @@ med_rate  = 5e-4
 high_rate = 1e-3
 
 #style weights
-high_style = 1e6
-# default is 1e5 (medium)
-low_style = 5e4
+high_style = 8e4
+med_style  = 4e4
+low_style  = 2e4
 
 
-
-    # CURRICULA
-
-Curricula = {
-
-        # dry run for testing basic functionality
+Models = {
     "dry_run": {
-        "stages": [
-            {"resolution": 64, "batch_size": 4, "epochs": 1, "lr": med_rate},
-            {"resolution": 64, "batch_size": 4, "epochs": 1, "lr": high_rate}
-        ]
+        "model_size": "small",
+        "loss": "standard",
+
+        "content": {
+            "dataset": "images/VOC2012",
+            "fraction": 0.01,
+        },
+
+        "style": {
+            "dataset": "images/Ukiyo_e",
+            "fraction": 0.1,
+        },
+
+        "curriculum": {
+            "stages": [
+                {"res": 32, "epochs": 2, "lr": low_rate},
+                {"res": 32, "epochs": 2, "lr": low_rate}
+            ]
+        }
     },
 
-    "no_style": {
-        "stages": [
-            {"resolution": 256, "batch_size": 1, "epochs": 8, "lr": med_rate, "style_weight": 0},
-            {"resolution": 512, "batch_size": 1, "epochs": 4, "lr": low_rate, "style_weight": 0}
-        ]
-    },
+    "big_no_style_v1": {
+        "model_size": "big",
+        "loss": "standard",
 
+        "content": {
+            "dataset": "images/VOC2012",
+            "fraction": 0.02,
+        },
 
+        "style": {
+            "dataset": "images/Ukiyo_e",
+            "fraction": 0.01,
+        },
 
-            # BASIC CURRICULUM - small scale straitforward training
-    
-
-    # simple small training curriculum
-    "basic": {
-        "stages": [
-            {"resolution": 224, "batch_size": 4, "epochs": 4, "lr": med_rate}
-        ]
-    },
-    # simple small training curriculum w/ high style weight
-    "basic_high_style": {
-        "stages": [
-            {"resolution": 224, "batch_size": 4, "epochs": 4, "lr": med_rate, "style_weight": high_style}
-        ]
-    },
-    # simple small training curriculum w/ low style weight
-    "basic_low_style": {
-        "stages": [
-            {"resolution": 224, "batch_size": 4, "epochs": 4, "lr": med_rate, "style_weight": low_style}
-        ]
-    },
-    # simple small training curriculum w/ bigger batches
-    "basic_big_batch": {
-        "stages": [
-            {"resolution": 224, "batch_size": 8, "epochs": 4, "lr": med_rate}
-        ]
-    },
-    # simple small training curriculum w/ smaller batches
-    "basic_small_batch": {
-        "stages": [
-            {"resolution": 224, "batch_size": 2, "epochs": 4, "lr": med_rate}
-        ]
-    },
-    # simple small training curriculum w/ higher LR
-    "basic_high_rate": {
-        "stages": [
-            {"resolution": 224, "batch_size": 4, "epochs": 4, "lr": high_rate}
-        ]
-    },
-    # simple small training curriculum w/ lower LR
-    "basic_low_rate": {
-        "stages": [
-            {"resolution": 224, "batch_size": 4, "epochs": 4, "lr": low_rate}
-        ]
+        "curriculum": {
+            "stages": [
+                {
+                    "epochs": 8, 
+                    "lr": med_rate, 
+                    "content_batch_size": 4, 
+                    "style_batch_size": 1, 
+                    "style_weight": 0
+                },
+            ]
+        }
     },
 
 
+    "medium_no_style_v1": {
+        "model_size": "medium",
+        "loss": "standard",
 
-            # STANDARD CURRICULUM - larger scale straitforward training
+        "content": {
+            "dataset": "images/VOC2012",
+            "fraction": 0.02,
+        },
 
-    # standard training
-    "standard": {
-        "stages": [
-            {"resolution": 256, "batch_size": 4, "epochs": 12, "lr": low_rate},
-        ]
+        "style": {
+            "dataset": "images/Ukiyo_e",
+            "fraction": 0.01,
+        },
+
+        "curriculum": {
+            "stages": [
+                {
+                    "epochs": 6, 
+                    "lr": med_rate, 
+                    "content_batch_size": 4, 
+                    "style_batch_size": 1, 
+                    "style_weight": 0
+                },
+            ]
+        }
     },
 
-    # high style weight
-    "standard_high_style": {
-        "stages": [
-            {"resolution": 256, "batch_size": 4, "epochs": 12, "lr": low_rate, "style_weight": high_style},
-        ]
+    "small_no_style_v1": {
+        "model_size": "small",
+        "loss": "standard",
+
+        "content": {
+            "dataset": "images/VOC2012",
+            "fraction": 0.02,
+        },
+
+        "style": {
+            "dataset": "images/Ukiyo_e",
+            "fraction": 0.01,
+        },
+
+        "curriculum": {
+            "stages": [
+                {
+                    "epochs": 4, 
+                    "lr": med_rate, 
+                    "content_batch_size": 4, 
+                    "style_batch_size": 1, 
+                    "style_weight": 0
+                },
+            ]
+        }
     },
 
-    # high style weight
-    "standard_low_style": {
-        "stages": [
-            {"resolution": 256, "batch_size": 4, "epochs": 12, "lr": low_rate, "style_weight": low_style},
-        ]
-    },
+    "basic_small_impressionism_v1": {
+        "model_size": "small",
+        "loss": "standard",
 
-    # high resolution 
-    "standard_high_res": {
-        "stages": [
-            {"resolution": 512, "batch_size": 4, "epochs": 12, "lr": low_rate},
-        ]
-    },
+        "content": {
+            "dataset": "images/VOC2012",
+            "fraction": 0.01,
+        },
 
-    # low resolution
-    "standard_low_res": {
-        "stages": [
-            {"resolution": 128, "batch_size": 4, "epochs": 12, "lr": low_rate},
-        ]
-    },
+        "style": {
+            "dataset": "images/Impressionism",
+            "fraction": 0.01,
+        },
 
-
-
-        # ADVANCED CURRICULUM - mixed training stages testing various curriculum strategies
-
-    # increasing difficulty (resolution)
-
-    "easy_to_hard": {
-        "stages": [
-            {"resolution": 256, "batch_size": 4, "epochs": 6, "lr": high_rate},
-            {"resolution": 384, "batch_size": 4, "epochs": 4, "lr": med_rate},
-            {"resolution": 512, "batch_size": 4, "epochs": 2, "lr": low_rate},
-        ]
-    },
-
-    # decreasing difficulty (exact reverse of easy to hard stages)
-    "hard_to_easy": {
-        "stages": [
-            {"resolution": 512, "batch_size": 4, "epochs": 2, "lr": low_rate},
-            {"resolution": 384, "batch_size": 4, "epochs": 4, "lr": med_rate},
-            {"resolution": 256, "batch_size": 4, "epochs": 6, "lr": high_rate},
-        ]
-    },
-
-    # cyclical difficulty
-    "cyclic": {
-        "stages": [
-            {"resolution": 256, "batch_size": 4, "epochs": 2, "lr": high_rate},
-            {"resolution": 384, "batch_size": 4, "epochs": 1, "lr": med_rate},
-            {"resolution": 512, "batch_size": 4, "epochs": 1, "lr": low_rate},
-
-            {"resolution": 256, "batch_size": 4, "epochs": 2, "lr": med_rate},
-            {"resolution": 384, "batch_size": 4, "epochs": 1, "lr": med_rate},
-            {"resolution": 512, "batch_size": 4, "epochs": 1, "lr": low_rate},
-
-            {"resolution": 256, "batch_size": 4, "epochs": 2, "lr": med_rate},
-            {"resolution": 384, "batch_size": 4, "epochs": 1, "lr": low_rate},
-            {"resolution": 512, "batch_size": 4, "epochs": 1, "lr": low_rate}
-        ]
-    },
-
-    # increasing style weight
-    "increasing_style": {
-        "stages": [
-            {"resolution": 256, "batch_size": 1, "epochs": 4, "lr": med_rate, "style_weight": 0},
-            {"resolution": 256, "batch_size": 4, "epochs": 4, "lr": med_rate},
-            {"resolution": 256, "batch_size": 4, "epochs": 4, "lr": med_rate, "style_weight": high_style}
-        ]
+        "curriculum": {
+            "stages": [
+                {"epochs": 4, "lr": low_rate},
+            ]
+        }
     }
 }
