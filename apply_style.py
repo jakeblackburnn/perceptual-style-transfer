@@ -3,18 +3,22 @@ import re
 import torch
 from PIL import Image
 from torchvision import transforms
-from style_transfer.img_transformer import Transformer
+from style_transfer.image_transformers.small_guy import SmallGuy
+from style_transfer.image_transformers.medium_guy import MediumGuy
+from style_transfer.image_transformers.big_guy import BigGuy
+from style_transfer.config import Models
 
 # ——— Configuration ———
 
-curriculum = 'standard'
+model_name = 'dry_run'  # Change this to match your trained model
 
-# Directory containing .pth checkpoints
-model_dir   = f"models/{curriculum}/checkpoints"
-# Directory containing content images to process
+model_size = Models.get(model_name).get('model_size')
+
+model_dir   = f"models/{model_name}/checkpoints"
+
 content_dir = "images/content/frogs"
-# Directory where outputs will go
-output_dir  = f"models/{curriculum}/output"
+
+output_dir  = f"outputs/{model_name}"
 
 # Valid image extensions
 valid_extensions = {'.jpg', '.jpeg', '.png'}
@@ -84,7 +88,18 @@ for content_img_name in content_images:
         print(f'  Loading checkpoint: {ckpt}')
         
         # Initialize network and load weights
-        transformer = Transformer().to(device).eval()
+        if model_size == "small":
+            model = SmallGuy();
+        elif model_size == "medium":
+            model = MediumGuy();
+        elif model_size == "big":
+            model = BigGuy();
+        else: 
+            print("""
+                  something is horribly wrong this is a nightmare 
+                  please help I couldnt figure out what sized model to use
+                  """)
+        transformer = model.to(device).eval()
         ckpt_dat = torch.load(model_path, map_location=device)
         state_dict = ckpt_dat["model_state_dict"]
         transformer.load_state_dict(state_dict)
