@@ -1,5 +1,5 @@
-import time
 import os
+import time
 
 import torch
 from torch.utils.data import DataLoader
@@ -47,9 +47,6 @@ def train_epoch(model, optimizer, content_loader, style_loader, style_weight, de
     avg_loss = sum(losses) / len(losses) if losses else 0
     return avg_loss, elapsed
 
-
-# define persistent optimizer for all stages
-adam = torch.optim.Adam
 
 def train_stage(model, optimizer, image_loaders, stage_idx, stage_config, out_dir, logger, device):
 
