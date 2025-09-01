@@ -1,11 +1,12 @@
 import os
 import time
-
 import torch
-from torch.utils.data import DataLoader
 
-from style_transfer.loss    import vgg_perceptual_loss, set_vgg_device
+from torch.utils.data import DataLoader
 from style_transfer.dataset import ImageDataset
+
+from style_transfer.loss import vgg_perceptual_loss
+from style_transfer.feature_extractors.vgg import initialize_vgg
 
 from style_transfer.image_transformers.small_guy import SmallGuy 
 from style_transfer.image_transformers.medium_guy import MediumGuy 
@@ -13,15 +14,15 @@ from style_transfer.image_transformers.big_guy import BigGuy
 
 from utils.metrics import MetricsLogger, save_checkpoint, save_final_model
 
-def train_epoch(model, optimizer, content_loader, style_loader, style_weight, device):
-
-    start_time = time.time() # start timer
+def train_epoch(model, optimizer, image_loaders, style_weight, device):
+    start_time = time.time()
 
     model.train()
     losses = []
 
-    # Create iterator for style batches that can be reset
-    style_iter = iter(style_loader)
+    content_loader, style_loader = image_loaders
+    style_iter = iter(style_loader) # resettable style image iterator
+
     for idx, content_batch in enumerate(content_loader, start=1):
         # Get next style batch, reset iterator if exhausted
         try:
@@ -29,6 +30,7 @@ def train_epoch(model, optimizer, content_loader, style_loader, style_weight, de
         except StopIteration:
             style_iter = iter(style_loader)
             style_batch = next(style_iter)
+
         content_batch = content_batch.to(device)
         style_batch = style_batch.to(device)
 
@@ -50,8 +52,6 @@ def train_epoch(model, optimizer, content_loader, style_loader, style_weight, de
 
 def train_stage(model, optimizer, image_loaders, stage_idx, stage_config, out_dir, logger, device):
 
-    content_loader, style_loader = image_loaders
-
     # set optimizer learning rate
     for param_group in optimizer.param_groups:
         param_group['lr'] = stage_config.get('lr')
@@ -61,7 +61,7 @@ def train_stage(model, optimizer, image_loaders, stage_idx, stage_config, out_di
     for epoch in range(1, epochs + 1):
 
 
-        avg_loss, elapsed = train_epoch(model, optimizer, content_loader, style_loader, style_weight, device)
+        avg_loss, elapsed = train_epoch(model, optimizer, image_loaders, style_weight, device)
         print(f"epoch {epoch}: avg loss = {avg_loss}, time = {elapsed} s")
         log_data = {
             'stage': stage_idx,
@@ -81,13 +81,22 @@ def train_stage(model, optimizer, image_loaders, stage_idx, stage_config, out_di
 
 def train_model(model_name, model_config, device):
 
+    print(f"training {model_name}:")
+    print(model_config)
+
     # unpack training configuration
     curriculum = model_config.get('curriculum')
     model_size = model_config.get('model_size', "medium")
+    layer_preset = model_config.get('layer_preset', 'standard')
     cdir  = model_config.get('content', {}).get('dataset')
     cfrac = model_config.get('content', {}).get('fraction', 1) # default to entire dir
     sdir  = model_config.get('style', {}).get('dataset')
     sfrac = model_config.get('style', {}).get('fraction', 1) # default to entire dir
+
+    # Initialize VGG model once for the entire training
+    print(f"Initializing VGG model with {layer_preset} preset on {device}")
+    initialize_vgg(layer_preset=layer_preset, device=device)
+
 
     # TODO: update metrics logger to no longer accept curriculum name
     out_dir = f"models/{model_name}"
@@ -106,7 +115,6 @@ def train_model(model_name, model_config, device):
               please help I couldnt figure out what sized model to use
               """)
 
-    set_vgg_device(device)
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), 5e4) # default initial lr
 
