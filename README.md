@@ -1,83 +1,72 @@
-# Neural Style Transfer
+# Perceptual Loss Style Transfer
 
-A PyTorch implementation of neural style transfer using VGG-based perceptual loss with configurable training curricula and multiple model architectures. Supports a fully configurable build pipeline with automatic metrics logging and an intuitive inference script. Also includes scripts for visualizing VGG activations, informing the fine-tuning of the perceptual loss calculation, as well as a conversion script for saving pytorch models to ONNX format. 
+PyTorch implementation of neural style transfer with configurable VGG-based perceptual loss, multiple model architectures, and an interactive visualization tool.
+
+![](examples/frog1.jpg)
+![](examples/frog2.jpg)
+![](examples/frog3.jpg)
 
 ## Features
 
-- **Multiple Model Architectures**: Small, medium, and large sized transformers
-- **Configurable Training Curricula**: Progressive training with adjustable resolution, batch size, epochs, and learning rates
-- **VGG Perceptual Loss**: Fine-tuned content and style loss computation using pre-trained VGG network
-- **Flexible Dataset Support**: Handles arbitrary content and style image collections
-- **GPU Acceleration**: Support for CUDA and MPS (Apple Silicon) backends
-- **Model Export**: Convert trained PyTorch models to ONNX format
-- **Comprehensive Metrics**: Training loss tracking and checkpoint management
+- **Multiple Model Architectures**: Small, medium, and large ResNet-inspired transformers
+- **Configurable VGG Feat Extractor**: Standard, weighted, shallow, or deep layer configurations
+- **Interactive Visualization**: Web-based VGG activation explorer with Dash
+- **Progressive Training**: Multi-stage curricula with dynamic resolution and batch sizes
+- **Multi-GPU Support**: CUDA, MPS (Apple Silicon), and CPU with auto-detection
+- **ONNX Export**: Deploy models in ONNX format
 
 ## Installation
 
 1. Clone the repository:
    ```bash
    git clone <repository-url>
-   cd style-transfer/py
+   cd perceptual-style-transfer
    ```
 
 2. Install dependencies:
    ```bash
-   pip install torch torchvision pillow
+   pip install torch torchvision pillow dash plotly
    ```
 
 ## Usage
 
-### Training a Model
+### Quick Start
 
-Configure your model's training settings in `style_transfer/config.py`, then specify the model name in build.py. initiate training with:
+1. **Train a model**: Configure settings in `style_transfer/config.py` and run:
+   ```bash
+   python build.py
+   ```
 
-```bash
-python build.py
-```
-
-### Applying Style Transfer
-
-1. Place images somewhere in `images/`.
-2. Set the model name and input image directory in `apply_style.py`
-3. Run inference:
+2. **Apply style transfer**: Set model and image paths in `apply_style.py` and run:
    ```bash
    python apply_style.py
    ```
 
-### Converting to ONNX
+3. **Visualize VGG activations**: Launch interactive web interface:
+   ```bash
+   python visualize.py
+   ```
 
-specify the model name to convert. 
-
-```bash
-python convert_to_onnx.py
-```
+4. **Export to ONNX**: Convert models for deployment:
+   ```bash
+   python convert_to_onnx.py
+   ```
 
 ## Project Structure
 
-- `style_transfer/` - Core style transfer implementation
-  - `train.py` - Training loop and epoch management
-  - `loss.py` - VGG perceptual loss functions
-  - `dataset.py` - Image dataset handling
-  - `config.py` - Model and training configurations
-- `utils/` - Utility functions for metrics, activation extraction, and visualization
-- `models/` - Trained models, training data / metrics, and checkpoints 
+- `style_transfer/` - Core implementation (training, loss, models, config)
+- `utils/` - Metrics and visualization utilities  
+- `models/` - Trained models and checkpoints
 - `images/` - Content and style image collections
 - `outputs/` - Generated stylized images
 
-## Technologies Used
+## Configuration
 
-- **Framework**: PyTorch, torchvision
-- **Image Processing**: PIL (Pillow)
-- **Model Export**: ONNX
-- **Compute**: CUDA, MPS (Apple Silicon)
+**VGG Layer Presets**: Choose from `standard`, `standard_weighted`, `shallow`, or `deep` configurations for different style transfer strategies.
 
-## Training Curriculum
+**Training**: Supports multi-stage progressive training with configurable resolution, batch sizes, learning rates, and style weights.
 
-The system supports progressive training curricula with configurable:
-- Image resolution 
-- Batch processing  
-- Learning rates and epochs per stage
-- Content/style loss weights
+**Technologies**: PyTorch, Dash/Plotly, ONNX export, multi-GPU support (CUDA/MPS/CPU).
 
 ## License
 
