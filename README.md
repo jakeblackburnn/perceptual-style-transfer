@@ -2,8 +2,10 @@
 
 PyTorch implementation of neural style transfer with configurable VGG-based perceptual loss, multiple model architectures, and an interactive visualization tool.
 
+<div>
 <img src="examples/frog2.jpg" width="300">
 <img src="examples/frog3.jpg" width="300">
+</div>
 
 ## Features
 
