@@ -3,7 +3,7 @@ import time
 import torch
 
 from torch.utils.data import DataLoader
-from style_transfer.dataset import ImageDataset
+from style_transfer.dataset import ImageDataset, SingleImageDataset
 
 from style_transfer.loss import vgg_perceptual_loss
 from style_transfer.feature_extractors.vgg import initialize_vgg
@@ -21,10 +21,11 @@ def train_epoch(model, optimizer, image_loaders, style_weight, device):
     losses = []
 
     content_loader, style_loader = image_loaders
+
+    # this is hacky for single image mode but it works
     style_iter = iter(style_loader) # resettable style image iterator
 
     for idx, content_batch in enumerate(content_loader, start=1):
-        # Get next style batch, reset iterator if exhausted
         try:
             style_batch = next(style_iter)
         except StopIteration:
@@ -88,10 +89,15 @@ def train_model(model_name, model_config, device):
     curriculum = model_config.get('curriculum')
     model_size = model_config.get('model_size', "medium")
     layer_preset = model_config.get('layer_preset', 'standard')
+
     cdir  = model_config.get('content', {}).get('dataset')
     cfrac = model_config.get('content', {}).get('fraction', 1) # default to entire dir
+
+    single_style = model_config.get('style', {}).get('single', False)
+
     sdir  = model_config.get('style', {}).get('dataset')
     sfrac = model_config.get('style', {}).get('fraction', 1) # default to entire dir
+
 
     # Initialize VGG model once for the entire training
     print(f"Initializing VGG model with {layer_preset} preset on {device}")
@@ -125,8 +131,11 @@ def train_model(model_name, model_config, device):
         print(f"\n=== Starting stage {stage_idx} at resolution {resolution} ===")
 
         content_dataset = ImageDataset(cdir, cfrac, resolution, device, quiet=False)
-        style_dataset = ImageDataset(sdir, sfrac, resolution, device, quiet=False)
-    
+
+        if single_style == True:
+            style_dataset = SingleImageDataset(sdir, resolution, device, quiet=False)
+        else:
+            style_dataset = ImageDataset(sdir, sfrac, resolution, device, quiet=False)
         
         dataset_info = {
             'content': content_dataset.dataset_info,

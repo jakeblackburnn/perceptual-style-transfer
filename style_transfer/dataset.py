@@ -78,3 +78,39 @@ class ImageDataset(Dataset):
         image_tensor = self.transform(image)
 
         return image_tensor
+
+
+
+class SingleImageDataset(Dataset):
+    def __init__(self, image_path, image_size, device, quiet=False):
+
+        if not quiet:
+            print(f"\n=== Dataset Information ===")
+            print(f"Single Image: {image_path}")
+            print(f"============================\n")
+
+        # flags
+        self.image_path = image_path
+        self.image_size = image_size
+        self.device = device
+
+        # transforms
+        self.transform = transforms.Compose([
+            transforms.Resize((image_size, image_size)),
+            transforms.ToTensor(),
+        ])
+
+        self.dataset_info = {}
+
+    # end init
+
+    def __len__(self):
+        return 1
+
+
+    def __getitem__(self, idx: int):
+        # Load and transform image
+        image = Image.open(self.image_path).convert("RGB")
+        image_tensor = self.transform(image)
+
+        return image_tensor
