@@ -4,7 +4,6 @@ Professional PyTorch neural style transfer with experiment-based configuration, 
 
 <div>
 <img src="examples/frog4.jpg" width="300">
-<p>--></p>
 <img src="examples/frog5.jpg" width="300">
 </div>
 
