@@ -1,9 +1,7 @@
 import torch
 import torch.onnx
 import os
-from style_transfer.image_transformers.small_guy import SmallGuy
-from style_transfer.image_transformers.medium_guy import MediumGuy
-from style_transfer.image_transformers.big_guy import BigGuy
+from style_transfer.models import StyleTransferModel
 from style_transfer.config import Models
 
 def convert_to_onnx(model_name):
@@ -19,17 +17,7 @@ def convert_to_onnx(model_name):
     print(f"Loading model from {pth_path}...")
     
     model_size = Models.get(model_name).get('model_size')
-    if model_size == "small":
-        model = SmallGuy();
-    elif model_size == "medium":
-        model = MediumGuy();
-    elif model_size == "big":
-        model = BigGuy();
-    else: 
-        print("""
-              something is horribly wrong this is a nightmare 
-              please help I couldnt figure out what sized model to use
-              """)
+    model = StyleTransferModel(size_config=model_size)
     
     # Load the state dict
     checkpoint = torch.load(pth_path, map_location='cpu')
