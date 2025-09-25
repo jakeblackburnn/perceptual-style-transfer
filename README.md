@@ -3,8 +3,9 @@
 Professional PyTorch neural style transfer with experiment-based configuration, progressive training curricula, and interactive visualization.
 
 <div>
-<img src="examples/frog2.jpg" width="300">
-<img src="examples/frog3.jpg" width="300">
+<img src="examples/frog4.jpg" width="300">
+<p>--></p>
+<img src="examples/frog5.jpg" width="300">
 </div>
 
 ## Features
