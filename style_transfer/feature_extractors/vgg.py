@@ -3,36 +3,8 @@ import torch.nn as nn
 from torchvision.models import vgg19, VGG19_Weights
 from collections import OrderedDict
 
-# Layer presets for different style transfer strategies
-layer_presets = {
-    'standard': {
-        'style_layers': ['0', '5', '10', '19', '28'],  # conv1_1, conv2_1, conv3_1, conv4_1, conv5_1
-        'content_layer': '21',  # conv4_2
-        'use_raw_features': False  # use gram matrices for style transfer
-    },
-    'standard_weighted': {
-        'style_layers': ['0', '5', '10', '19', '28'],  # conv1_1, conv2_1, conv3_1, conv4_1, conv5_1
-        'content_layer': '21',  # conv4_2
-        'style_layer_weights': [0.5, 1.0, 2.0, 2.5, 3.0],
-        'use_raw_features': False  # use gram matrices for style transfer
-    },
-    'shallow': {
-        'style_layers': ['0', '2', '5', '7', '10'],  # early conv layers for fine texture
-        'content_layer': '10',  # conv3_1 for mid-level features
-        'use_raw_features': False  # use gram matrices for style transfer
-    },
-    'deep': {
-        'style_layers': ['10', '19', '28'],  # later conv layers for semantic style
-        'content_layer': '28',  # conv5_1 for high-level content
-        'use_raw_features': False  # use gram matrices for style transfer
-    },
-    'feature_blender': {
-        'style_layers': ['0', '5', '10', '19', '28'], 
-        'content_layer': '21',  
-        'style_layer_weights': ['0.2', '0.2', '0.2', '0.2', '0.2'], 
-        'use_raw_features': True  
-    }
-} 
+# Import layer presets from dedicated config module
+from ..config.layer_presets import get_legacy_preset_config
 
 class VGG(nn.Module):
     
@@ -69,15 +41,15 @@ class VGG(nn.Module):
 # Global VGG model instance for persistent use
 _vgg_model = None
 
-def initialize_vgg(layer_preset='standard', device='cpu'):
+def initialize_vgg(layer_preset='standard', device='cpu', style_specific_presets=None):
     global _vgg_model # persistend vgg model object
-    
-    # Get layer configuration from preset
-    preset_config = layer_presets[layer_preset]
+
+    # Get layer configuration from preset (checks style-specific first, then global)
+    preset_config = get_legacy_preset_config(layer_preset, style_specific_presets)
 
     content_layer = preset_config['content_layer']
     style_layers = preset_config['style_layers']
-    
+
     # Create VGG model with layers from preset
     _vgg_model = VGG(style_layers + [content_layer], layer_preset, preset_config).eval()
     if device is not None:
