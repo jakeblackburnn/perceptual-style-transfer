@@ -1,38 +1,49 @@
-import torch
 import torch.nn as nn
-import torch.nn.functional as F
+from .architectures.residual_block import ResidualBlock
 
-class ResidualBlock(nn.Module):
-
-    def __init__(self, channels):
+class StyleTransferModel(nn.Module):
+    def __init__(self, size_config="medium", in_channels=3, out_channels=3):
         super().__init__()
 
-        self.conv1 = nn.Sequential(
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1),
-            nn.InstanceNorm2d(channels, affine=True),
-            nn.ReLU(inplace=True)
-        )
-        self.conv2 = nn.Sequential(
-            nn.ReflectionPad2d(1),
-            nn.Conv2d(channels, channels, kernel_size=3, stride=1),
-            nn.InstanceNorm2d(channels, affine=True)
-        )
+        # Size configurations
+        configs = {
+            "small": {
+                "ngf": 32,
+                "n_residual": 2,
+                "initial_kernel_size": 5,
+                "initial_padding": 2,
+                "final_kernel_size": 5,
+                "final_padding": 2
+            },
+            "medium": {
+                "ngf": 32,
+                "n_residual": 5,
+                "initial_kernel_size": 9,
+                "initial_padding": 4,
+                "final_kernel_size": 9,
+                "final_padding": 4
+            },
+            "big": {
+                "ngf": 64,
+                "n_residual": 9,
+                "initial_kernel_size": 9,
+                "initial_padding": 4,
+                "final_kernel_size": 9,
+                "final_padding": 4
+            }
+        }
 
-    def forward(self, x):
-        return x + self.conv2(self.conv1(x))
+        if size_config not in configs:
+            raise ValueError(f"Unknown size_config: {size_config}. Must be one of: {list(configs.keys())}")
 
-
-
-class MediumGuy(nn.Module):
-
-    def __init__(self, in_channels=3, out_channels=3, ngf=32, n_residual=5):
-        super().__init__()
+        config = configs[size_config]
+        ngf = config["ngf"]
+        n_residual = config["n_residual"]
 
         # Initial conv block
         self.initial = nn.Sequential(
-            nn.ReflectionPad2d(4),
-            nn.Conv2d(in_channels, ngf, kernel_size=9, stride=1),
+            nn.ReflectionPad2d(config["initial_padding"]),
+            nn.Conv2d(in_channels, ngf, kernel_size=config["initial_kernel_size"], stride=1),
             nn.InstanceNorm2d(ngf, affine=True),
             nn.ReLU(inplace=True)
         )
@@ -71,8 +82,8 @@ class MediumGuy(nn.Module):
 
         # Final conv block
         self.final = nn.Sequential(
-            nn.ReflectionPad2d(4),
-            nn.Conv2d(ngf, out_channels, kernel_size=9, stride=1),
+            nn.ReflectionPad2d(config["final_padding"]),
+            nn.Conv2d(ngf, out_channels, kernel_size=config["final_kernel_size"], stride=1),
             nn.Tanh()
         )
 
@@ -86,3 +97,9 @@ class MediumGuy(nn.Module):
         x = self.final(x)
         # Scale from [-1,1] to [0,1]
         return (x + 1) / 2
+
+
+def create_model(size="medium", device="cpu"):
+    """Factory function for clean model creation"""
+    model = StyleTransferModel(size_config=size).to(device)
+    return model
