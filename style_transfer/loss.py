@@ -40,15 +40,18 @@ def vgg_perceptual_loss(model,
         if use_raw_features:
             gen_features = gen_feats[layer]      # [B_content, C, H, W]
             style_features = style_feats[layer]  # [B_style, C, H, W]
-            for content_idx in range(b_content):
-                for style_idx in range(b_style):
-                    style_loss += nn.MSELoss()(gen_features[content_idx], style_features[style_idx])
+            # Vectorized computation of all content-style pairs
+            gen_expanded = gen_features.unsqueeze(1)      # [B_content, 1, C, H, W]
+            style_expanded = style_features.unsqueeze(0)  # [1, B_style, C, H, W]
+            pairwise_losses = ((gen_expanded - style_expanded) ** 2).mean(dim=(-3, -2, -1))  # [B_content, B_style]
+            style_loss += pairwise_losses.mean()  # Normalize by total pairs
         else:
             gen_grams = gram_matrix(gen_feats[layer])
             style_grams = gram_matrix(style_feats[layer])
-
-            for content_idx in range(b_content):
-                for style_idx in range(b_style):
-                    style_loss += nn.MSELoss()(gen_grams[content_idx], style_grams[style_idx])
+            # Vectorized computation of all content-style gram matrix pairs
+            gen_expanded = gen_grams.unsqueeze(1)        # [B_content, 1, C, C]
+            style_expanded = style_grams.unsqueeze(0)    # [1, B_style, C, C]
+            pairwise_losses = ((gen_expanded - style_expanded) ** 2).mean(dim=(-2, -1))  # [B_content, B_style]
+            style_loss += pairwise_losses.mean()  # Normalize by total pairs
 
     return content_weight * content_loss + style_weight * style_loss
