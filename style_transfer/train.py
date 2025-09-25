@@ -8,9 +8,7 @@ from style_transfer.dataset import ImageDataset, SingleImageDataset
 from style_transfer.loss import vgg_perceptual_loss
 from style_transfer.feature_extractors.vgg import initialize_vgg
 
-from style_transfer.image_transformers.small_guy import SmallGuy 
-from style_transfer.image_transformers.medium_guy import MediumGuy 
-from style_transfer.image_transformers.big_guy import BigGuy 
+from style_transfer.models import StyleTransferModel 
 
 from utils.metrics import MetricsLogger, save_checkpoint, save_final_model
 
@@ -109,20 +107,10 @@ def train_model(model_name, model_config, device):
     logger = MetricsLogger(logfile=os.path.join(out_dir, 'metrics.csv'), curriculum_name=model_name)
 
     # create Model object
-    if model_size == "small":
-        model = SmallGuy();
-    elif model_size == "medium":
-        model = MediumGuy();
-    elif model_size == "big":
-        model = BigGuy();
-    else: 
-        print("""
-              something is horribly wrong this is a nightmare 
-              please help I couldnt figure out what sized model to use
-              """)
+    model = StyleTransferModel(size_config=model_size)
 
     model.to(device)
-    optimizer = torch.optim.Adam(model.parameters(), 5e4) # default initial lr
+    optimizer = torch.optim.Adam(model.parameters(), 5e-4) # default initial lr
 
     
     for stage_idx, stage in enumerate(curriculum['stages'], start=1):
