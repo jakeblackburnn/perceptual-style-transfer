@@ -112,7 +112,8 @@ def train_model(model_name, model_config, device):
     model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), 5e-4) # default initial lr
 
-    
+    all_loaders = []  # Track all DataLoaders for cleanup
+
     for stage_idx, stage in enumerate(curriculum['stages'], start=1):
 
         resolution = stage.get('res', 256)
@@ -153,6 +154,7 @@ def train_model(model_name, model_config, device):
         )
 
         image_loaders = (content_loader, style_loader)
+        all_loaders.extend([content_loader, style_loader])  # Track loaders
 
         # run training for this stage
         train_stage(
@@ -168,7 +170,33 @@ def train_model(model_name, model_config, device):
 
     print("training complete.")
     logger.save_metadata()
-    
+
     final_model_path = os.path.join(out_dir, f"{model_name}.pth")
     torch.save(model.state_dict(), final_model_path)
     print(f"Final model saved to: {final_model_path}")
+
+    print("Cleaning up DataLoader workers...")
+    # Proper cleanup: let PyTorch handle worker shutdown automatically
+    for loader in all_loaders:
+        # Only delete iterator if it exists, PyTorch handles the rest
+        if hasattr(loader, '_iterator') and loader._iterator is not None:
+            del loader._iterator
+    # Clear the loader references to trigger proper cleanup
+    all_loaders.clear()
+
+    # Clear GPU memory and global models
+    print("Clearing GPU memory...")
+    if device.type in ['cuda', 'mps']:
+        torch.cuda.empty_cache() if device.type == 'cuda' else None
+        if hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+    print("GPU memory cleared.")
+
+    # Clear global VGG model
+    print("Clearing global VGG model...")
+    from style_transfer.feature_extractors.vgg import _vgg_model
+    import style_transfer.feature_extractors.vgg as vgg_module
+    vgg_module._vgg_model = None
+    print("VGG model cleared.")
+
+    os._exit(0)
