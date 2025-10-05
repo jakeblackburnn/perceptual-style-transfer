@@ -8,6 +8,11 @@ dataset = {
     "style": port_of_colliore,
 }
 
+big_dataset = {
+    "content": {"dataset": "images/Impressionism", "fraction": 0.2},
+    "style": port_of_colliore,
+}
+
 def get_collioure_experiments(curricula):
     return {
         "port_of_collioure": {
@@ -19,6 +24,18 @@ def get_collioure_experiments(curricula):
         "shallow_collioure": {
             "model_size": "small",
             "layer_preset": "shallow",
+            **dataset,
+            "curriculum": { "stages": curricula["standard_high_style"]},
+        },
+        "mini_collioure": {
+            "model_size": "small",
+            "layer_preset": "standard_x_shallow",
+            **dataset,
+            "curriculum": { "stages": curricula["standard_mega_style"]},
+        },
+        "super_collioure": {
+            "model_size": "big",
+            "layer_preset": "standard",
             **dataset,
             "curriculum": { "stages": curricula["standard_high_style"]},
         },

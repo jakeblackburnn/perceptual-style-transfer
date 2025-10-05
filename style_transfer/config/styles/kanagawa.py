@@ -22,6 +22,10 @@ KANAGAWA_STYLE = {
 
 # Local dataset variations for kanagawa experiments
 KANAGAWA_DATASETS = {
+    "impressionism_dry_run": {
+        "content": {"dataset": "images/Impressionism", "fraction": 0.01},
+        "style": KANAGAWA_STYLE
+    },
     "impressionism_small": {
         "content": {"dataset": "images/Impressionism", "fraction": 0.07},
         "style": KANAGAWA_STYLE
@@ -53,6 +57,13 @@ def get_kanagawa_experiments(curricula):
         "layer_preset": "standard",
         **KANAGAWA_DATASETS["impressionism_small"],
         "curriculum": {"stages": curricula["standard"]}
+    },
+
+    "kanagawa_dry_run": {
+        "model_size": "small",
+        "layer_preset": "standard",
+        **KANAGAWA_DATASETS["impressionism_dry_run"],
+        "curriculum": {"stages": curricula["dry_run"]}
     },
 
     "high_kanagawa": {
