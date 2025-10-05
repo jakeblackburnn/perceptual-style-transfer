@@ -42,6 +42,14 @@ CURRICULA = {
         "content_batch_size": 4,
         "style_batch_size": 1
     }],
+    "long_hires_histyle": [{
+        "res": 364,
+        "epochs": 12,
+        "lr": med_rate,
+        "style_weight": high_style,
+        "content_batch_size": 4,
+        "style_batch_size": 1
+    }],
     "standard_mega_style": [{
         "epochs": 6,
         "lr": med_rate,

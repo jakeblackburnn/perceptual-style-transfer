@@ -19,6 +19,14 @@ LAYER_PRESETS = {
         'use_raw_features': False  # use gram matrices for style transfer
     },
 
+    'standard_x_shallow': {
+        'feature_extractor': 'vgg19',
+        'style_layers': ['0', '5', '10', '19', '28'],  # conv1_1, conv2_1, conv3_1, conv4_1, conv5_1
+        'content_layer': '21',  # conv4_2
+        'style_layer_weights': [3.0, 2.0, 1.5, 1.0, 0.5],
+        'use_raw_features': False  # use gram matrices for style transfer
+    },
+
     'shallow': {
         'feature_extractor': 'vgg19',
         'style_layers': ['0', '2', '5', '7', '10'],  # early conv layers for fine texture
