@@ -198,5 +198,3 @@ def train_model(model_name, model_config, device):
     import style_transfer.feature_extractors.vgg as vgg_module
     vgg_module._vgg_model = None
     print("VGG model cleared.")
-
-    os._exit(0)
