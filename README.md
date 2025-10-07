@@ -6,7 +6,7 @@
 <img src="examples/frog4.jpg" width="300">
 <img src="examples/frog5.jpg" width="300">
 </div>
-<sub><sup>This red-eyed tree frog is now styled like the famous "Wave of Kanagawa"</sub><sup>
+<sub><sup>This red-eyed tree frog is now styled like the famous "Wave of Kanagawa"</sup></sub>
 
 --- 
 
