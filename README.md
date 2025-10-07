@@ -8,6 +8,8 @@
 </div>
 <sub><sup>This red-eyed tree frog is now styled like the famous "Wave of Kanagawa"</sub><sup>
 
+--- 
+
 This project builds on the original work, offering an easy to use experimentation workspace and supporting features beyond the original scope such as multi-image style datasets.
 
 Furthermore, the project includes a visualization tool for viewing activations from the feature extractor to inform experiments with different extraction patterns / weights, for the purpose of fine-tuning a particular style
@@ -52,17 +54,20 @@ python3 run_experiment.py
 
 ## Project Structure
 
-- `style_transfer/` - Core implementation
-  - `config/` - Modular configuration system
-    - `styles/` - Style-specific experiment definitions
-    - `curricula.py` - Training schedules and hyperparameters
-    - `layer_presets.py` - VGG layer configurations
-  - `feature_extractors/` - VGG and other feature extraction modules
-  - `architectures/` - Model architecture components
-- `utils/` - Metrics and visualization utilities
-- `models/` - Trained models and checkpoints
-- `images/` - Content and style image collections
-- `outputs/` - Generated stylized images
+```
+style_transfer/          # Core implementation
+├── config/              # Modular configuration system
+│   ├── styles/          # Style-specific experiment definitions
+│   ├── curricula.py     # Training schedules and hyperparameters
+│   └── layer_presets.py # VGG layer configurations
+├── feature_extractors/  # VGG and other feature extraction modules
+└── architectures/       # Model architecture components
+
+utils/                   # Metrics and visualization utilities
+models/                  # Trained models and checkpoints
+images/                  # Content and style image collections
+outputs/                 # Generated stylized images
+```
 
 ## Configuration
 
