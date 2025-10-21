@@ -16,34 +16,34 @@ KANAGAWA_LAYER_PRESETS = {
 
 # Kanagawa style definition
 KANAGAWA_STYLE = {
-    "dataset": "images/singles/wave-of-kanagawa.jpg",
+    "dataset": "artifacts/images/singles/wave-of-kanagawa.jpg",
     "single": True
 }
 
 # Local dataset variations for kanagawa experiments
 KANAGAWA_DATASETS = {
     "impressionism_dry_run": {
-        "content": {"dataset": "images/Impressionism", "fraction": 0.01},
+        "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.01},
         "style": KANAGAWA_STYLE
     },
     "impressionism_small": {
-        "content": {"dataset": "images/Impressionism", "fraction": 0.07},
+        "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.07},
         "style": KANAGAWA_STYLE
     },
     "impressionism_medium": {
-        "content": {"dataset": "images/Impressionism", "fraction": 0.10},
+        "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.10},
         "style": KANAGAWA_STYLE
     },
     "impressionism_large": {
-        "content": {"dataset": "images/Impressionism", "fraction": 0.15},
+        "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.15},
         "style": KANAGAWA_STYLE
     },
     "voc_small": {
-        "content": {"dataset": "images/VOC2012", "fraction": 0.05},
+        "content": {"dataset": "artifacts/images/VOC2012", "fraction": 0.05},
         "style": KANAGAWA_STYLE
     },
     "voc_medium": {
-        "content": {"dataset": "images/VOC2012", "fraction": 0.08},
+        "content": {"dataset": "artifacts/images/VOC2012", "fraction": 0.08},
         "style": KANAGAWA_STYLE
     }
 }

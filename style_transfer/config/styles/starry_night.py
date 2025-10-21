@@ -1,10 +1,10 @@
 starry_night = {
-    "dataset": "images/singles/starry-night.jpg",
+    "dataset": "artifacts/images/singles/starry-night.jpg",
     "single": True
 }
 
 dataset = {
-    "content": {"dataset": "images/Pointillism", "fraction": 1.0},
+    "content": {"dataset": "artifacts/images/Pointillism", "fraction": 1.0},
     "style": starry_night,
 }
 

@@ -1,10 +1,10 @@
 colors2= {
-    "dataset": "images/singles/colors2.jpg",
+    "dataset": "artifacts/images/singles/colors2.jpg",
     "single": True
 }
 
 dataset = {
-    "content": {"dataset": "images/Impressionism", "fraction": 0.07},
+    "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.07},
     "style": colors2,
 }
 

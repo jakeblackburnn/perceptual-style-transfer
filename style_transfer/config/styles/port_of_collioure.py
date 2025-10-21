@@ -1,15 +1,15 @@
 port_of_colliore = {
-    "dataset": "images/singles/port-of-collioure.jpg",
+    "dataset": "artifacts/images/singles/port-of-collioure.jpg",
     "single": True
 }
 
 dataset = {
-    "content": {"dataset": "images/Impressionism", "fraction": 0.07},
+    "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.07},
     "style": port_of_colliore,
 }
 
 big_dataset = {
-    "content": {"dataset": "images/Impressionism", "fraction": 0.2},
+    "content": {"dataset": "artifacts/images/Impressionism", "fraction": 0.2},
     "style": port_of_colliore,
 }
 
