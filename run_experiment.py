@@ -32,7 +32,7 @@ def train_experiment(experiment_name, model_config, device):
     print(f"\n✓ Training complete: {experiment_name}")
 
 
-def apply_style(experiment_name, model_config, device, content_dir="images/content/frogs", output_dir=None):
+def apply_style(experiment_name, model_config, device, content_dir="artifacts/images/content/frogs", output_dir=None):
     print(f"\n{'='*60}")
     print(f"APPLYING STYLE: {experiment_name}")
     print(f"{'='*60}\n")
@@ -228,13 +228,21 @@ def run_single_experiment():
         print(f"\n✓ Training complete: {experiment_name}")
 
     elif action == 2:  # Apply only
-        success = apply_style(experiment_name, model_config, device)
+        # Prompt for input directory
+        content_dir = input(f"\nEnter input directory (default: artifacts/images/content/frogs): ").strip()
+        if not content_dir:
+            content_dir = "artifacts/images/content/frogs"
+        success = apply_style(experiment_name, model_config, device, content_dir=content_dir)
         if not success:
             print(f"\n✗ Style application failed")
 
     elif action == 3:  # Train and apply
         train_experiment(experiment_name, model_config, device)
-        success = apply_style(experiment_name, model_config, device)
+        # Prompt for input directory
+        content_dir = input(f"\nEnter input directory (default: artifacts/images/content/frogs): ").strip()
+        if not content_dir:
+            content_dir = "artifacts/images/content/frogs"
+        success = apply_style(experiment_name, model_config, device, content_dir=content_dir)
         if not success:
             print(f"\n✗ Style application failed")
 
