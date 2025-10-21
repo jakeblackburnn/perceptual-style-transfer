@@ -5,12 +5,10 @@ import torch
 from torch.utils.data import DataLoader
 from style_transfer.dataset import ImageDataset, SingleImageDataset
 
-from style_transfer.loss import vgg_perceptual_loss
-from style_transfer.feature_extractors.vgg import initialize_vgg
-
 from style_transfer.models import StyleTransferModel 
-
-from utils.metrics import MetricsLogger, save_checkpoint, save_final_model
+from style_transfer.feature_extractors.vgg import initialize_vgg
+from style_transfer.loss import vgg_perceptual_loss
+from style_transfer.utils.metrics import MetricsLogger, save_checkpoint, save_final_model
 
 def train_epoch(model, optimizer, image_loaders, style_weight, device):
     start_time = time.time()
