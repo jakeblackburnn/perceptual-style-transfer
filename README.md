@@ -9,8 +9,8 @@ Last Updated: Oct 21 2025
 **Transfer Learning** approach to **Neural Style Transfer** based on [Johnson Et. Al](https://arxiv.org/abs/1603.08155), which uses "percetual loss" calculated from features extracted from a pretrained classification model (VGG19) rather than per-pixel loss. 
 
 <div>
-<img src="examples/frog4.jpg" width="300">
-<img src="examples/frog5.jpg" width="300">
+<img src="artifacts/examples/frog4.jpg" width="300">
+<img src="artifacts/examples/frog5.jpg" width="300">
 </div>
 <sub><sup>This red-eyed tree frog is now styled like the famous "Wave of Kanagawa"</sup></sub>
 
