@@ -1,5 +1,11 @@
 # Perceptual Loss Style Transfer
 
+Created By - J. Blackburn [DEMO WEBSITE](https://style-transfer-demo-75243.web.app/)
+
+Last Updated: Oct 21 2025
+
+---
+
 **Transfer Learning** approach to **Neural Style Transfer** based on [Johnson Et. Al](https://arxiv.org/abs/1603.08155), which uses "percetual loss" calculated from features extracted from a pretrained classification model (VGG19) rather than per-pixel loss. 
 
 <div>
@@ -10,9 +16,9 @@
 
 --- 
 
-This project builds on the original work, offering an easy to use experimentation workspace and supporting features beyond the original scope such as multi-image style datasets.
+This project builds on the original work, offering an easy to use experimentation workspace and supporting features beyond the original scope such as multi-image style datasets, as well as a [DEMO WEBSITE](https://style-transfer-demo-75243.web.app/), built with a <b>FastAPI</b> backend, where you can stylize your own images:
 
-Furthermore, the project includes a visualization tool for viewing activations from the feature extractor to inform experiments with different extraction patterns / weights, for the purpose of fine-tuning a particular style
+Additionally, the project includes a visualization tool for viewing activations from the feature extractor to inform experiments with different extraction patterns / weights, for the purpose of fine-tuning a particular style
 
 ---
 ## Installation
