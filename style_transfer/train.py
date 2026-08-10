@@ -7,7 +7,7 @@ from style_transfer.dataset import ImageDataset, SingleImageDataset
 
 from style_transfer.models import StyleTransferModel 
 from style_transfer.feature_extractors.vgg import initialize_vgg
-from style_transfer.loss import vgg_perceptual_loss
+from style_transfer.loss import perceptual_loss
 from style_transfer.utils.metrics import MetricsLogger, save_checkpoint, save_final_model
 
 def train_epoch(model, optimizer, image_loaders, style_weight, device):
@@ -32,7 +32,8 @@ def train_epoch(model, optimizer, image_loaders, style_weight, device):
         style_batch = style_batch.to(device)
 
         optimizer.zero_grad()
-        loss = vgg_perceptual_loss(model, content_batch, style_batch, style_weight=style_weight)
+        generated_images = model(content_batch)
+        loss = perceptual_loss(generated_images, content_batch, style_batch, style_weight=style_weight)
         loss.backward()
         optimizer.step()
         losses.append(loss.item())

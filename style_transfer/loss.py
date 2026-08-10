@@ -8,24 +8,26 @@ def gram_matrix(feature_map):
     features = feature_map.view(b, c, h * w)
     return torch.bmm(features, features.transpose(1, 2)) / (c * h * w)
 
-def vgg_perceptual_loss(model, 
-                        content_images, 
-                        style_images,
-                        content_weight=1.0,
-                        style_weight=1e5):
-    
+def perceptual_loss(generated_images,
+                    content_images,
+                    style_images,
+                    content_weight=1.0,
+                    style_weight=1e5):
+    """Score a generated image against content/style targets via VGG features.
+
+    Decoupled from the generator: the caller runs the model and passes in
+    `generated_images`, so this is reusable as a training signal for any
+    image-producing model (e.g. a diffusion model's denoised output), not
+    just the feed-forward StyleTransferModel.
+    """
+
     vgg = get_vgg_model()
-    
+
     content_layer = vgg.preset_config['content_layer']
 
     style_layers        = vgg.preset_config['style_layers']
     style_layer_weights = vgg.preset_config.get( 'style_layer_weights', [1.0] * len(style_layers) )
     use_raw_features    = vgg.preset_config.get('use_raw_features', False)
-
-    b_content = content_images.size(0)
-    b_style = style_images.size(0)
-    
-    generated_images = model(content_images)  # [B_content, 3, H, W]
 
     # features extracted from vgg
     gen_feats = vgg(generated_images)        # Dict: layer_name -> [B_content, C, H, W]

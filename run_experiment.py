@@ -6,9 +6,8 @@ from pathlib import Path
 
 from style_transfer.config import Models
 from style_transfer.train import train_model
-from style_transfer.models import StyleTransferModel
+from style_transfer.inference import load_model, stylize_image
 from PIL import Image
-from torchvision import transforms
 
 
 def setup_device():
@@ -50,19 +49,7 @@ def apply_style(experiment_name, model_config, device, content_dir="artifacts/im
     os.makedirs(output_dir, exist_ok=True)
 
     print(f"Loading model from {model_path}")
-    model = StyleTransferModel(size_config=model_size).to(device).eval()
-    ckpt_data = torch.load(model_path, map_location=device)
-    state_dict = ckpt_data.get("model_state_dict", ckpt_data)
-    model.load_state_dict(state_dict)
-
-    preprocess = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Lambda(lambda x: x * 255)
-    ])
-    postprocess = transforms.Compose([
-        transforms.Lambda(lambda x: x.clamp(0, 1)),
-        transforms.ToPILImage()
-    ])
+    model = load_model(model_path, model_size, device)
 
     # Get content images
     content_path = Path(content_dir)
@@ -85,16 +72,9 @@ def apply_style(experiment_name, model_config, device, content_dir="artifacts/im
     for img_path in content_images:
         print(f"Processing {img_path.name}...", end=" ")
 
-        # Load and preprocess
+        # Load and stylize
         content_img = Image.open(img_path).convert('RGB')
-        content_tensor = preprocess(content_img).unsqueeze(0).to(device)
-
-        # Transform
-        with torch.no_grad():
-            output_tensor = model(content_tensor)
-
-        # Save result
-        output_img = postprocess(output_tensor.squeeze(0).cpu())
+        output_img = stylize_image(content_img, model, device)
         output_path = Path(output_dir) / f"{img_path.stem}.jpg"
         output_img.save(output_path)
 

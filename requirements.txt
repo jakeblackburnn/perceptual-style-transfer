@@ -1,0 +1,10 @@
+torch
+torchvision
+numpy
+pillow
+onnx
+dash
+plotly
+pytest
+notebook
+ipykernel

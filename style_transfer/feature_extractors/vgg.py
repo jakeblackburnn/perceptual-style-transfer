@@ -57,5 +57,5 @@ def initialize_vgg(layer_preset='standard', device='cpu', style_specific_presets
 
 def get_vgg_model():
     if _vgg_model is None:
-        raise RuntimeError("VGG model not initialized. Call initialize_vgg() first. idiot.")
+        raise RuntimeError("VGG model not initialized. Call initialize_vgg() first.")
     return _vgg_model

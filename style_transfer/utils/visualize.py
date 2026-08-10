@@ -12,8 +12,8 @@ import os
 import glob
 from pathlib import Path
 
-from style_transfer.loss import VGG
-from utils.activation_extractor import ActivationExtractor
+from style_transfer.feature_extractors.vgg import VGG
+from style_transfer.utils.activation_extractor import ActivationExtractor
 
 class PlotlyVisualizer:
     def __init__(self, activations_dict, image_names):

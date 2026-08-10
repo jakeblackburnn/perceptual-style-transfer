@@ -56,7 +56,6 @@ class ImageDataset(Dataset):
 
         # flags
         self.image_size = image_size
-        self.device = device
 
         # transforms
         self.transform = transforms.Compose([
@@ -92,7 +91,6 @@ class SingleImageDataset(Dataset):
         # flags
         self.image_path = image_path
         self.image_size = image_size
-        self.device = device
 
         # transforms
         self.transform = transforms.Compose([

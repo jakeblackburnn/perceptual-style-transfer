@@ -2,9 +2,8 @@ import os
 import re
 import torch
 from PIL import Image
-from torchvision import transforms
-from style_transfer.models import StyleTransferModel
 from style_transfer.config import Models
+from style_transfer.inference import load_model as _load_model, stylize_image
 
 # Configuration
 MODEL_NAME = 'high_starry_night'  
@@ -32,13 +31,7 @@ def natural_key(fname):
     return int(m.group(1)) if m else fname
 
 def create_model(model_size, model_path, device):
-    model = StyleTransferModel(size_config=model_size).to(device).eval()
-    ckpt_data = torch.load(model_path, map_location=device)
-    
-    state_dict = ckpt_data.get("model_state_dict", ckpt_data)
-    model.load_state_dict(state_dict)
-    
-    return model
+    return _load_model(model_path, model_size, device)
 
 def setup_directories(output_dir):
     os.makedirs(output_dir, exist_ok=True)
@@ -52,25 +45,8 @@ def get_output_path(use_final_model, output_dir, img_basename, model_filename=No
         return img_output_dir, f"{model_filename}.jpg"
 
 def process_single_image(content_path, model, device, output_path):
-    preprocess = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Lambda(lambda x: x * 255)
-    ])
-    postprocess = transforms.Compose([
-        transforms.Lambda(lambda x: x.clamp(0, 1)),
-        transforms.ToPILImage()
-    ])
-    
-    # Load and preprocess
     content_img = Image.open(content_path).convert('RGB')
-    content_tensor = preprocess(content_img).unsqueeze(0).to(device)
-    
-    # Transform
-    with torch.no_grad():
-        output_tensor = model(content_tensor)
-    
-    # Save result
-    output_img = postprocess(output_tensor.squeeze(0).cpu())
+    output_img = stylize_image(content_img, model, device)
     output_img.save(output_path)
     return output_path
 

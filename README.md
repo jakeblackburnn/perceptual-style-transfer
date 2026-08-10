@@ -6,7 +6,7 @@ Last Updated: Oct 21 2025
 
 ---
 
-**Transfer Learning** approach to **Neural Style Transfer** based on [Johnson Et. Al](https://arxiv.org/abs/1603.08155), which uses "percetual loss" calculated from features extracted from a pretrained classification model (VGG19) rather than per-pixel loss. 
+**Transfer Learning** approach to **Neural Style Transfer** based on [Johnson Et. Al](https://arxiv.org/abs/1603.08155), which uses "perceptual loss" calculated from features extracted from a pretrained classification model (VGG19) rather than per-pixel loss. 
 
 <div>
 <img src="artifacts/examples/frog4.jpg" width="300">
@@ -25,7 +25,7 @@ Additionally, the project includes a visualization tool for viewing activations 
 
 ```bash
 git clone <repository-url>
-cd perceptual-style-transfer
+cd <repository-directory>
 pip install torch torchvision pillow dash plotly
 ```
 
@@ -43,16 +43,16 @@ python3 run_experiment.py
 
 ---
 
-- Utils
+- Utilities
 
 1. **Visualize VGG activations**: Launch interactive web interface:
    ```bash
-   python visualize.py
+   python -m style_transfer.utils.visualize
    ```
 
 2. **Export to ONNX**: Convert trained models for deployment:
    ```bash
-   python convert_to_onnx.py
+   python -m style_transfer.utils.convert_to_onnx
    ```
 
 >
@@ -67,15 +67,16 @@ style_transfer/          # Core implementation
 │   ├── curricula.py     # Training schedules and hyperparameters
 │   └── layer_presets.py # VGG layer configurations
 ├── feature_extractors/  # VGG and other feature extraction modules
-└── architectures/       # Model architecture components
+├── architectures/       # Model architecture components
+└── utils/               # Visualization and conversion utilities
 
-utils/                   # Metrics and visualization utilities
-models/                  # Trained models and checkpoints
-images/                  # Content and style image collections
-outputs/                 # Generated stylized images
+artifacts/examples/      # Example styled images
+run_experiment.py        # Main experimentation script
 ```
 
 ## Configuration
+
+Style experiments are defined in `style_transfer/config/styles/`. Each style configuration specifies the style images, VGG layer extraction patterns, loss weights, and training curriculum.
 
 ## License
 
