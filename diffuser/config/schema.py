@@ -41,7 +41,9 @@ class DiffusionExperimentConfig:
     # to be a useful (rather than actively harmful) training signal.
     perceptual_cutoff_frac: float = 0.2
     perceptual_content_weight: float = 1.0
-    perceptual_style_weight: float = 1e5
+    # old 1e5 divided by ~85,000 for perceptual_loss's sum reduction of the
+    # style term; an untested starting point.
+    perceptual_style_weight: float = 1.2
     perceptual_loss_weight: float = 1e-2
     layer_preset: str = "standard"
 

@@ -4,7 +4,7 @@ from torchvision.models import vgg19, VGG19_Weights
 from collections import OrderedDict
 
 # Import layer presets from dedicated config module
-from ..config.layer_presets import get_legacy_preset_config
+from ..config.layer_presets import get_layer_preset
 
 class VGG(nn.Module):
     
@@ -41,11 +41,11 @@ class VGG(nn.Module):
 # Global VGG model instance for persistent use
 _vgg_model = None
 
-def initialize_vgg(layer_preset='standard', device='cpu', style_specific_presets=None):
+def initialize_vgg(layer_preset='standard', device='cpu'):
     global _vgg_model # persistend vgg model object
 
-    # Get layer configuration from preset (checks style-specific first, then global)
-    preset_config = get_legacy_preset_config(layer_preset, style_specific_presets)
+    # Get layer configuration from preset
+    preset_config = get_layer_preset(layer_preset)
 
     content_layer = preset_config['content_layer']
     style_layers = preset_config['style_layers']

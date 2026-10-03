@@ -3,17 +3,6 @@
 
 # Dependencies will be injected by auto-discovery system
 
-# Kanagawa-specific layer presets (optional - can also use global presets)
-KANAGAWA_LAYER_PRESETS = {
-    'kanagawa_optimized': {
-        'feature_extractor': 'vgg19',
-        'style_layers': ['0', '5', '10'],  # Fewer layers for bold, simplified style
-        'content_layer': '21',  # Keep standard content layer
-        'style_layer_weights': [0.3, 0.4, 0.3],  # Custom weights for kanagawa
-        'use_raw_features': False
-    }
-}
-
 # Kanagawa style definition
 KANAGAWA_STYLE = {
     "dataset": "artifacts/images/singles/wave-of-kanagawa.jpg",
@@ -44,6 +33,10 @@ KANAGAWA_DATASETS = {
     },
     "voc_medium": {
         "content": {"dataset": "artifacts/images/VOC2012", "fraction": 0.08},
+        "style": KANAGAWA_STYLE
+    },
+    "voc_full": {
+        "content": {"dataset": "artifacts/images/VOC2012", "fraction": 1.0},  # ~23,000 images (jpg + png)
         "style": KANAGAWA_STYLE
     }
 }
@@ -151,11 +144,19 @@ def get_kanagawa_experiments(curricula):
         "curriculum": {"stages": curricula["standard"]}
     },
 
-    # Example using kanagawa-specific layer preset
+    # Example using the kanagawa-tuned layer preset
     "kanagawa_custom_layers": {
         "model_size": "medium",
-        "layer_preset": "kanagawa_optimized",  # Uses KANAGAWA_LAYER_PRESETS
+        "layer_preset": "kanagawa_optimized",
         **KANAGAWA_DATASETS["impressionism_small"],
         "curriculum": {"stages": curricula["standard"]}
+    },
+
+    # Long run on all of VOC2012: ~23,000 steps at batch 4 over 4 epochs
+    "kanagawa_long": {
+        "model_size": "small",
+        "layer_preset": "standard",
+        **KANAGAWA_DATASETS["voc_full"],
+        "curriculum": {"stages": curricula["long"]}
     }
     }

@@ -85,16 +85,3 @@ def save_checkpoint(model, optimizer, epoch, stage_idx, out_dir, prefix='ckpt'):
     filename = os.path.join(out_dir, f"{prefix}_stage{stage_idx}_epoch{epoch}.pth")
     torch.save(checkpoint, filename)
     return filename
-
-def save_final_model(model, optimizer, epoch, stage_idx, out_dir, curriculum, prefix='final'):
-
-    ensure_dir(out_dir)
-    final = {
-        'epochs': epoch,
-        'stages': stage_idx,
-        'model_state_dict': model.state_dict(),
-        'optimizer_state_dict': optimizer.state_dict(),
-    }
-    filename = os.path.join(out_dir, f"{prefix}_{curriculum}.pth")
-    torch.save(final, filename)
-    return filename

@@ -14,7 +14,7 @@ from style_transfer.loss import perceptual_loss
 
 
 def diffusion_perceptual_loss(x0_pred, content_images, style_images, timesteps, cutoff_timestep,
-                               content_weight=1.0, style_weight=1e5):
+                               content_weight=1.0, style_weight=1.2):
     """Score x0_pred against content/style targets, restricted to low-noise timesteps.
 
     Only batch elements with timesteps[i] < cutoff_timestep contribute; the
@@ -26,6 +26,10 @@ def diffusion_perceptual_loss(x0_pred, content_images, style_images, timesteps, 
     multiply) so callers can unconditionally call .backward() on the
     combined loss without a "does not require grad" error on high-noise
     training steps where nothing passes the cutoff.
+
+    style_weight's default is the old 1e5 divided by ~85,000 to match
+    perceptual_loss's sum reduction of the style term; an untested starting
+    point.
     """
     mask = timesteps < cutoff_timestep
     if not torch.any(mask):

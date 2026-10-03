@@ -33,7 +33,7 @@ def test_all_timesteps_below_cutoff_matches_direct_perceptual_loss():
     timesteps = torch.tensor([10, 50])
 
     gated = diffusion_perceptual_loss(x0_pred, content, style, timesteps, cutoff_timestep=200)
-    direct = perceptual_loss(x0_pred, content, style)
+    direct = perceptual_loss(x0_pred, content, style, style_weight=1.2)  # diffusion_perceptual_loss's default
 
     assert torch.allclose(gated, direct)
 
@@ -45,6 +45,6 @@ def test_mixed_timesteps_scores_only_masked_subset():
     timesteps = torch.tensor([10, 500, 20])  # only indices 0 and 2 qualify
 
     gated = diffusion_perceptual_loss(x0_pred, content, style, timesteps, cutoff_timestep=200)
-    direct_on_subset = perceptual_loss(x0_pred[[0, 2]], content[[0, 2]], style)
+    direct_on_subset = perceptual_loss(x0_pred[[0, 2]], content[[0, 2]], style, style_weight=1.2)
 
     assert torch.allclose(gated, direct_on_subset)
