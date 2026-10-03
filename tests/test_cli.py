@@ -145,6 +145,16 @@ def test_train_unknown_experiment(models_dir, capsys):
 
 
 def test_serve_without_web_package_hints_at_ui_extra(models_dir, monkeypatch, capsys):
-    monkeypatch.setitem(sys.modules, "style_transfer_web", None)  # makes the import fail
+    # None makes the import fail; .app too, since test_web may have imported it already
+    monkeypatch.setitem(sys.modules, "style_transfer_web", None)
+    monkeypatch.setitem(sys.modules, "style_transfer_web.app", None)
     assert main(["--models-dir", str(models_dir), "serve"]) == 2
     assert "pip install -e '.[ui]'" in capsys.readouterr().err
+
+
+def test_serve_starts_the_web_app_on_the_models_dir(models_dir, monkeypatch):
+    app = pytest.importorskip("style_transfer_web.app")
+    calls = []
+    monkeypatch.setattr(app, "run", lambda models_dir, port, device: calls.append((models_dir, port, device)))
+    assert main(["--models-dir", str(models_dir), "serve", "--port", "8123"]) == 0
+    assert calls == [(models_dir, 8123, None)]

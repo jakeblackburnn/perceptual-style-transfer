@@ -2,14 +2,14 @@
 
 Mirrors style_transfer/inference.py's shape: preprocess/postprocess reused
 directly from there (both packages agree on plain [0, 1]-range image
-tensors at the PIL boundary), select_device and find_checkpoint likewise
-reused rather than re-derived.
+tensors at the PIL boundary), select_device likewise reused rather than
+re-derived.
 """
 
 import torch
 from PIL import Image
 
-from style_transfer.inference import preprocess, postprocess, select_device, find_checkpoint  # noqa: F401
+from style_transfer.inference import preprocess, postprocess, select_device  # noqa: F401
 
 from .models import ConditionedUNet
 from .schedule import build_sampling_scheduler, to_diffusion_space, from_diffusion_space

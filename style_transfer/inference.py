@@ -127,19 +127,3 @@ def select_device():
         return torch.device("cuda")
     return torch.device("cpu")
 
-
-def find_checkpoint(experiment_name):
-    """Locate <base>/<name>/<name>.pth under artifacts/models/ or models/.
-
-    Unused by style transfer itself (models are found via model.json). It
-    stays only because diffuser/inference.py imports it from here; delete it
-    once that import is gone.
-    """
-    for base in (Path("artifacts/models"), Path("models")):
-        candidate = base / experiment_name / f"{experiment_name}.pth"
-        if candidate.exists():
-            return candidate
-    raise FileNotFoundError(
-        f"No checkpoint found for experiment '{experiment_name}' under "
-        f"artifacts/models/ or models/"
-    )
