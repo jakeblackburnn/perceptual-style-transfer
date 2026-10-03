@@ -5,11 +5,19 @@ from pathlib import Path
 
 from PIL import Image
 
-from style_transfer.inference import select_device, find_checkpoint
+from style_transfer.inference import select_device
 
 from diffuser.config import DiffusionExperiments
 from diffuser.train import train_model
 from diffuser.inference import load_model, stylize_image
+
+
+def find_checkpoint(experiment_name):
+    """diffuser.train saves to models/<name>/<name>.pth."""
+    path = Path("models") / experiment_name / f"{experiment_name}.pth"
+    if not path.exists():
+        raise FileNotFoundError(f"No checkpoint found at {path}")
+    return path
 
 
 def train_experiment(experiment_name, cfg, device):

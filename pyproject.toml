@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "style-transfer"
+version = "0.2.0"
+description = "Perceptual-loss style transfer (Johnson et al. 2016) in PyTorch"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+dependencies = [
+    "torch",
+    "torchvision",
+    "numpy",
+    "pillow",
+]
+
+[project.optional-dependencies]
+ui = ["fastapi", "uvicorn", "python-multipart"]
+viz = ["dash", "plotly"]
+export = ["onnx"]
+research = ["diffusers", "notebook", "ipykernel"]
+dev = ["pytest", "httpx"]
+
+[project.scripts]
+style-transfer = "style_transfer.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["style_transfer*", "style_transfer_web*", "diffuser*"]
+
+[tool.setuptools.package-data]
+style_transfer_web = ["static/*"]
